@@ -13,9 +13,9 @@ import { Spinner } from "@nextui-org/spinner";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 
 import { baseURL } from "@/utils/constant";
+import { setAuthentication } from "@/utils/auth";
 
 const page = () => {
-	const [firstname, setFirstname] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [isVisible, setIsVisible] = useState(false);
@@ -30,34 +30,28 @@ const page = () => {
 		setIsLoading(true);
 
 		const payload = {
-			firstname,
 			email,
 			password,
 		};
 		console.log(payload);
 
 		axios
-			.post(`${baseURL}/users/register`, payload)
+			.post(`${baseURL}/users/login`, payload)
 			.then((res) => {
 				console.log("payload", payload);
 				console.log(res.data);
-				setIsLoading(false);
-				toast.success(
-					<div>
-						Account Created Successfully <br /> Please Login in
-					</div>
-				);
+				setAuthentication(res.data.token); // Setting authentication token in local storage
+				toast.success("Login Successful"); // Showing success toast notification
+
 				// Clear the form
-				setFirstname("");
 				setEmail("");
 				setPassword("");
 
-				// push to login after registeration
-				router.push("/login");
+				router.push("/dashboard"); // Redirecting to homepage after successful login
 			})
 			.catch((err) => {
 				setIsLoading(false);
-				toast.error(err?.response?.data?.message || "Something went wrong");
+				toast.error(err?.response?.data?.message); // Showing error toast notification if login fails
 				console.log("error", err);
 			});
 	};
@@ -65,36 +59,22 @@ const page = () => {
 	return (
 		<div className="flex flex-col items-center justify-center space-y-10 min-h-screen">
 			<div className="flex flex-col items-center space-y-2">
-				<h1 className="font-semibold text-3xl">Create Your Account</h1>
-				<p className="text-lg text-[#707070]">
-					We're thrilled to have you here at huddle
-				</p>
+				<h1 className="font-semibold text-3xl">Welcome back 😁</h1>
+				<p className="text-xl text-[#707070]">We're excited to see you again</p>
 			</div>
 			<form
 				onSubmit={handleSubmit}
 				className="flex flex-col gap-4 w-[350px]"
 			>
 				<Input
-					type="name"
-					label="Name"
-					placeholder="Enter your Firstname"
-					labelPlacement={"outside"}
-					onChange={(e) => setFirstname(e.target.value)}
-					value={firstname}
-					disabled={isLoading}
-					required
-					className={`${isLoading ? "opacity-50 pointer-events-none" : ""}`}
-				/>
-
-				<Input
 					type="email"
 					label="Email"
 					placeholder="Enter your email"
 					labelPlacement={"outside"}
-					onChange={(e) => setEmail(e.target.value)}
 					value={email}
 					disabled={isLoading}
 					required
+					onChange={(e) => setEmail(e.target.value)}
 					className={`${isLoading ? "opacity-50 pointer-events-none" : ""}`}
 				/>
 
@@ -116,13 +96,12 @@ const page = () => {
 						</button>
 					}
 					type={isVisible ? "text" : "password"}
-					onChange={(e) => setPassword(e.target.value)}
 					value={password}
 					disabled={isLoading}
 					required
+					onChange={(e) => setPassword(e.target.value)}
 					className={`${isLoading ? "opacity-50 pointer-events-none" : ""}`}
 				/>
-
 				<Button
 					color="primary"
 					radius="md"
@@ -135,13 +114,19 @@ const page = () => {
 							size="sm"
 						/>
 					) : (
-						"Create Account"
+						"Login"
 					)}
 				</Button>
 			</form>
 
 			<p className="text-lg text-[#707070] mt-8">
-				Already have an account? <Link href="/login" className="text-blue-500">Login</Link>
+				Don't have an account?{" "}
+				<Link
+					href="/register"
+					className="text-blue-500"
+				>
+					Sign up
+				</Link>
 			</p>
 		</div>
 	);
