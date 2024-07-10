@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -13,19 +13,36 @@ import { Spinner } from "@nextui-org/spinner";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 
 import { baseURL } from "@/utils/constant";
-import { setAuthentication } from "@/utils/auth";
+import { isLogin, setAuthentication } from "@/utils/auth";
 
-const page = () => {
+const Page = () => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [isVisible, setIsVisible] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
+	const [isCheckingAuth, setIsCheckingAuth] = useState(true); // New state for auth check
 
 	const toggleVisibility = () => setIsVisible(!isVisible);
 
 	const router = useRouter();
 
-	const handleSubmit = (e: any) => {
+	useEffect(() => {
+		const authenticate = async () => {
+			try {
+				if (await isLogin()) {
+					router.push("/dashboard");
+				}
+			} catch (error) {
+				console.error("Error checking login status:", error);
+			} finally {
+				setIsCheckingAuth(false);
+			}
+		};
+
+		authenticate();
+	}, [router]);
+
+	const handleSubmit = async (e: any) => {
 		e.preventDefault();
 		setIsLoading(true);
 
@@ -33,28 +50,35 @@ const page = () => {
 			email,
 			password,
 		};
-		console.log(payload);
 
-		axios
-			.post(`${baseURL}/users/login`, payload)
-			.then((res) => {
-				console.log("payload", payload);
-				console.log(res.data);
-				setAuthentication(res.data.token); // Setting authentication token in local storage
-				toast.success("Login Successful"); // Showing success toast notification
+		try {
+			const res = await axios.post(`${baseURL}/users/login`, payload);
+			setAuthentication(res.data.token);
+			toast.success("Login Successful");
 
-				// Clear the form
-				setEmail("");
-				setPassword("");
+			setEmail("");
+			setPassword("");
 
-				router.push("/dashboard"); // Redirecting to homepage after successful login
-			})
-			.catch((err) => {
-				setIsLoading(false);
-				toast.error(err?.response?.data?.message); // Showing error toast notification if login fails
-				console.log("error", err);
-			});
+			router.push("/dashboard");
+		} catch (error: any) {
+			const errorMessage = error?.response?.data?.message || "Login failed";
+			toast.error(errorMessage);
+			console.log("error", error);
+		} finally {
+			setIsLoading(false);
+		}
 	};
+
+	if (isCheckingAuth) {
+		return (
+			<div className="flex justify-center items-center min-h-screen">
+				<Spinner
+					color="primary"
+					size="lg"
+				/>
+			</div>
+		);
+	}
 
 	return (
 		<div className="flex flex-col items-center justify-center space-y-10 min-h-screen">
@@ -132,4 +156,4 @@ const page = () => {
 	);
 };
 
-export default page;
+export default Page;

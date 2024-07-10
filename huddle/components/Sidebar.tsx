@@ -1,5 +1,6 @@
 "use client";
 
+import { logOut } from "@/utils/auth";
 import { Button } from "@nextui-org/button";
 import { LogOut } from "lucide-react";
 import { useState } from "react";
@@ -24,8 +25,14 @@ const Sidebar = () => {
 			setNextProjectId(nextProjectId + 1);
 		}
 	};
+
+	const handleLogout = () => {
+		logOut(); // Call the logout function to remove the authentication token
+		window.location.href = "/login"; // Redirect to the login screen
+	};
+
 	return (
-		<div className="pt-8 pb-20 shadow-xl w-[260px] min-h-screen flex flex-col justify-between">
+		<div className="pt-8 pb-20 border-l-1 border-gray-300 w-[260px] min-h-screen flex flex-col justify-between">
 			{/* logo and projects */}
 			<div>
 				<p className="font-bold ml-10 mb-14">Huddle</p>
@@ -47,7 +54,10 @@ const Sidebar = () => {
 			</div>
 
 			{/* logout button */}
-			<p className="flex items-center gap-2 font-medium hover:bg-[#973FCF]/10 text-[#707070] hover:text-black py-[10px] bg-white pl-10 cursor-pointer">
+			<p
+				onClick={handleLogout}
+				className="flex items-center gap-2 font-medium hover:bg-[#973FCF]/10 text-[#707070] hover:text-black py-[10px] bg-white pl-10 cursor-pointer"
+			>
 				<span>{<LogOut />}</span>
 				Log out
 			</p>

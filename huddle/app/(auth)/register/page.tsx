@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -13,17 +13,35 @@ import { Spinner } from "@nextui-org/spinner";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 
 import { baseURL } from "@/utils/constant";
+import { isLogin } from "@/utils/auth";
 
-const page = () => {
+const RegisterPage = () => {
 	const [firstname, setFirstname] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [isVisible, setIsVisible] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
+	const [isCheckingAuth, setIsCheckingAuth] = useState(true); // New state for auth check
 
 	const toggleVisibility = () => setIsVisible(!isVisible);
-
 	const router = useRouter();
+
+	useEffect(() => {
+		const authenticate = async () => {
+			try {
+				if (await isLogin()) {
+					router.push("/dashboard");
+				} else {
+					setIsCheckingAuth(false);
+				}
+			} catch (error) {
+				console.error("Error checking login status:", error);
+				setIsCheckingAuth(false);
+			}
+		};
+
+		authenticate();
+	}, [router]);
 
 	const handleSubmit = (e: any) => {
 		e.preventDefault();
@@ -34,13 +52,10 @@ const page = () => {
 			email,
 			password,
 		};
-		console.log(payload);
 
 		axios
 			.post(`${baseURL}/users/register`, payload)
 			.then((res) => {
-				console.log("payload", payload);
-				console.log(res.data);
 				setIsLoading(false);
 				toast.success(
 					<div>
@@ -52,7 +67,7 @@ const page = () => {
 				setEmail("");
 				setPassword("");
 
-				// push to login after registeration
+				// push to login after registration
 				router.push("/login");
 			})
 			.catch((err) => {
@@ -61,6 +76,17 @@ const page = () => {
 				console.log("error", err);
 			});
 	};
+
+	if (isCheckingAuth) {
+		return (
+			<div className="flex justify-center items-center min-h-screen">
+				<Spinner
+					color="primary"
+					size="lg"
+				/>
+			</div>
+		);
+	}
 
 	return (
 		<div className="flex flex-col items-center justify-center space-y-10 min-h-screen">
@@ -141,10 +167,16 @@ const page = () => {
 			</form>
 
 			<p className="text-lg text-[#707070] mt-8">
-				Already have an account? <Link href="/login" className="text-blue-500">Login</Link>
+				Already have an account?{" "}
+				<Link
+					href="/login"
+					className="text-blue-500"
+				>
+					Login
+				</Link>
 			</p>
 		</div>
 	);
 };
 
-export default page;
+export default RegisterPage;

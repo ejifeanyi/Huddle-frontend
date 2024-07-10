@@ -3,7 +3,7 @@ import axios from "axios";
 import { baseURL } from "./constant";
 
 export const setCookie = (key: any, value: any) => {
-	cookie.set(key, value, { expires: 1 }); // Set cookie with expiration of 1 day
+	cookie.set(key, value, { expires: 15 }); // Set cookie with expiration of 15 days
 };
 
 export const removeCookie = (key: any) => {
@@ -28,7 +28,7 @@ export const isLogin = async () => {
 	if (token) {
 		try {
 			const res = await axios.post(`${baseURL}/auth`, { token }); // Send POST request to verify token
-			return res.data; // Return response data which typically contains authentication status
+			return res.data.success; // Return true if token is valid
 		} catch (error) {
 			console.error("Error checking login status:", error);
 			return false; // Return false if there's an error or token is invalid
