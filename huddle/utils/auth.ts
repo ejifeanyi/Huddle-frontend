@@ -2,37 +2,38 @@ import cookie from "js-cookie";
 import axios from "axios";
 import { baseURL } from "./constant";
 
-export const setCookie = (key: any, value: any) => {
-	cookie.set(key, value, { expires: 15 }); // Set cookie with expiration of 15 days
+export const setCookie = (key: string, value: string) => {
+	cookie.set(key, value, { expires: 15 });
 };
 
-export const removeCookie = (key: any) => {
-	cookie.remove(key); // Remove cookie by key
+export const removeCookie = (key: string) => {
+	cookie.remove(key);
 };
 
-export const getCookie = (key: any) => {
-	return cookie.get(key); // Get cookie value by key
+export const getCookie = (key: string) => {
+	return cookie.get(key);
 };
 
-export const setAuthentication = (token: any) => {
-	setCookie("token", token); // Set authentication token as a cookie named "token"
+export const setAuthentication = (token: string) => {
+	setCookie("token", token);
+	localStorage.setItem("token", token); // Ensure token is also set in local storage
 };
 
 export const logOut = () => {
-	removeCookie("token"); // Remove authentication token cookie to log out
+	removeCookie("token");
+	localStorage.removeItem("token"); // Remove token from local storage
 };
 
 export const isLogin = async () => {
-	const token = getCookie("token"); // Get authentication token from cookie
-
+	const token = getCookie("token");
 	if (token) {
 		try {
-			const res = await axios.post(`${baseURL}/auth`, { token }); // Send POST request to verify token
-			return res.data.success; // Return true if token is valid
+			const res = await axios.post(`${baseURL}/auth`, { token });
+			return res.data.success;
 		} catch (error) {
 			console.error("Error checking login status:", error);
-			return false; // Return false if there's an error or token is invalid
+			return false;
 		}
 	}
-	return false; // Return false if no token found
+	return false;
 };

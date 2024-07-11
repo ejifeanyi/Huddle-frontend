@@ -16,11 +16,11 @@ import { baseURL } from "@/utils/constant";
 import { isLogin, setAuthentication } from "@/utils/auth";
 
 const Page = () => {
-	const [email, setEmail] = useState("");
-	const [password, setPassword] = useState("");
-	const [isVisible, setIsVisible] = useState(false);
-	const [isLoading, setIsLoading] = useState(false);
-	const [isCheckingAuth, setIsCheckingAuth] = useState(true); // New state for auth check
+	const [email, setEmail] = useState<string>("");
+	const [password, setPassword] = useState<string>("");
+	const [isVisible, setIsVisible] = useState<boolean>(false);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [isCheckingAuth, setIsCheckingAuth] = useState<boolean>(true); // New state for auth check
 
 	const toggleVisibility = () => setIsVisible(!isVisible);
 
@@ -42,7 +42,7 @@ const Page = () => {
 		authenticate();
 	}, [router]);
 
-	const handleSubmit = async (e: any) => {
+	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		setIsLoading(true);
 

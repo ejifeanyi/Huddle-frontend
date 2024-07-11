@@ -9,21 +9,23 @@ import Link from "next/link";
 import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
 import { Spinner } from "@nextui-org/spinner";
+import { Checkbox } from "@nextui-org/react";
 
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 
 import { baseURL } from "@/utils/constant";
-import { isLogin } from "@/utils/auth";
+import { isLogin, setAuthentication } from "@/utils/auth";
 
 const RegisterPage = () => {
-	const [firstname, setFirstname] = useState("");
-	const [email, setEmail] = useState("");
-	const [password, setPassword] = useState("");
-	const [isVisible, setIsVisible] = useState(false);
-	const [isLoading, setIsLoading] = useState(false);
-	const [isCheckingAuth, setIsCheckingAuth] = useState(true); // New state for auth check
+	const [firstname, setFirstname] = useState<string>("");
+	const [email, setEmail] = useState<string>("");
+	const [password, setPassword] = useState<string>("");
+	const [isVisible, setIsVisible] = useState<boolean>(false);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [isCheckingAuth, setIsCheckingAuth] = useState<boolean>(true); // New state for auth check
 
 	const toggleVisibility = () => setIsVisible(!isVisible);
+
 	const router = useRouter();
 
 	useEffect(() => {
@@ -43,7 +45,7 @@ const RegisterPage = () => {
 		authenticate();
 	}, [router]);
 
-	const handleSubmit = (e: any) => {
+	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		setIsLoading(true);
 
@@ -53,28 +55,30 @@ const RegisterPage = () => {
 			password,
 		};
 
-		axios
-			.post(`${baseURL}/users/register`, payload)
-			.then((res) => {
-				setIsLoading(false);
-				toast.success(
-					<div>
-						Account Created Successfully <br /> Please Login in
-					</div>
-				);
-				// Clear the form
-				setFirstname("");
-				setEmail("");
-				setPassword("");
+		try {
+			const res = await axios.post(`${baseURL}/users/register`, payload);
+			setAuthentication(res.data.token);
+			setIsLoading(false);
+			toast.success(
+				<div>
+					Account Created Successfully <br /> Please Login in
+				</div>
+			);
+			// Clear the form
+			setFirstname("");
+			setEmail("");
+			setPassword("");
 
-				// push to login after registration
-				router.push("/login");
-			})
-			.catch((err) => {
-				setIsLoading(false);
-				toast.error(err?.response?.data?.message || "Something went wrong");
-				console.log("error", err);
-			});
+			// push to login after registration
+			router.push("/login");
+		} catch (error: any) {
+			const errorMessage =
+				error?.response?.data?.message || "Registration failed";
+			toast.error(errorMessage);
+			console.log("error", error);
+		} finally {
+			setIsLoading(false);
+		}
 	};
 
 	if (isCheckingAuth) {
@@ -148,6 +152,22 @@ const RegisterPage = () => {
 					required
 					className={`${isLoading ? "opacity-50 pointer-events-none" : ""}`}
 				/>
+
+				<div className="flex py-2 px-1 justify-between">
+					<Checkbox
+						classNames={{
+							label: "text-small",
+						}}
+					>
+						Remember me
+					</Checkbox>
+					<Link
+						color="primary"
+						href="#"
+					>
+						Forgot password?
+					</Link>
+				</div>
 
 				<Button
 					color="primary"
