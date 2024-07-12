@@ -109,6 +109,7 @@ const RegisterPage = () => {
 					label="Name"
 					placeholder="Enter your Firstname"
 					labelPlacement={"outside"}
+					variant="bordered"
 					onChange={(e) => setFirstname(e.target.value)}
 					value={firstname}
 					disabled={isLoading}
@@ -121,6 +122,7 @@ const RegisterPage = () => {
 					label="Email"
 					placeholder="Enter your email"
 					labelPlacement={"outside"}
+					variant="bordered"
 					onChange={(e) => setEmail(e.target.value)}
 					value={email}
 					disabled={isLoading}
@@ -132,6 +134,7 @@ const RegisterPage = () => {
 					label="Password"
 					placeholder="Enter your password"
 					labelPlacement={"outside"}
+					variant="bordered"
 					endContent={
 						<button
 							className="focus:outline-none"

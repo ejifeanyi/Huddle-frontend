@@ -95,6 +95,7 @@ const Page = () => {
 					label="Email"
 					placeholder="Enter your email"
 					labelPlacement={"outside"}
+					variant="bordered"
 					value={email}
 					disabled={isLoading}
 					required
@@ -106,6 +107,7 @@ const Page = () => {
 					label="Password"
 					placeholder="Enter your password"
 					labelPlacement={"outside"}
+					variant="bordered"
 					endContent={
 						<button
 							className="focus:outline-none"
