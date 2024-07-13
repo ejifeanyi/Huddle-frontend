@@ -13,7 +13,7 @@ const Sidebar = () => {
 	};
 
 	return (
-		<div className="pt-8 pb-20 border-l-gray-400 border shadow-sm  w-[260px] min-h-screen flex flex-col justify-between">
+		<div className="pt-8 pb-20 shadow-xl  w-[260px] min-h-screen flex flex-col justify-between">
 			{/* logo and projects */}
 			<div>
 				<p className="font-bold ml-10 mb-14">Huddle</p>
