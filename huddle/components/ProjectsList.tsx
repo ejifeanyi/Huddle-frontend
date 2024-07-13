@@ -6,7 +6,7 @@ import axios from "axios";
 import { baseURL } from "@/utils/constant";
 
 interface Project {
-	id: number;
+	_id: string;
 	name: string;
 	description: string;
 }
@@ -23,18 +23,14 @@ const ProjectsList = () => {
 
 		const fetchProjects = async () => {
 			try {
-				if (token) {
+				if (storedToken) {
 					const res = await axios.get(`${baseURL}/projects`, {
 						headers: {
-							Authorization: `Bearer ${token}`,
+							Authorization: `Bearer ${storedToken}`,
 						},
 					});
 
-					// Access projects using array methods
-					const projectNames = res.data.map((project: any) => project.name);
-					if (projectNames.length > 0) {
-						setProjects(projectNames);
-					}
+					setProjects(res.data);
 				}
 			} catch (err) {
 				setError("Failed to load projects");
@@ -44,11 +40,13 @@ const ProjectsList = () => {
 			}
 		};
 
-		if (token) {
+		const interval = setInterval(() => {
 			fetchProjects();
-		} else {
-			setIsLoading(false);
-		}
+		}, 10000);
+
+		fetchProjects();
+
+		return () => clearInterval(interval);
 	}, [token]);
 
 	if (isLoading) {
@@ -60,8 +58,17 @@ const ProjectsList = () => {
 	}
 
 	return (
-		<div>
-			<h2>Projects List</h2>
+		<div className="">
+			<ul className="flex flex-col space-y-2">
+				{projects.map((project) => (
+					<li
+						key={project._id}
+						className="hover:bg-[#973FCF]/10 text-[#707070] hover:text-black bg-white cursor-pointer py-[10px] text-sm pl-10 font-medium hover:font-semibold"
+					>
+						{project.name}
+					</li>
+				))}
+			</ul>
 		</div>
 	);
 };

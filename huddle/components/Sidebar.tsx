@@ -18,9 +18,14 @@ const Sidebar = () => {
 			<div>
 				<p className="font-bold ml-10 mb-14">Huddle</p>
 
-				<CreateProjectModal />
+				<div className="mb-3 border-b-1">
+					<CreateProjectModal />
+				</div>
 
-				<ProjectsList />
+				<div className="mb-3">
+					<h3 className="ml-10 font-semibold text-lg mb-5">All Projects</h3>
+					<ProjectsList />
+				</div>
 			</div>
 
 			{/* logout button */}

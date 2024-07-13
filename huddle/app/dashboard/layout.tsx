@@ -1,4 +1,5 @@
 import Sidebar from "@/components/Sidebar";
+import Navbar from "../../components/Navbar";
 
 export default function DashboardLayout({
 	children,
@@ -8,8 +9,10 @@ export default function DashboardLayout({
 	return (
 		<section className="flex">
 			<Sidebar />
-
-			{children}
+			<div className="ml-[32px] flex flex-col gap-5 w-full">
+				<Navbar />
+				{children}
+			</div>
 		</section>
 	);
 }
