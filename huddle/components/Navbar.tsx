@@ -47,10 +47,10 @@ const Navbar = () => {
 	};
 
 	return (
-		<div className="flex items-center py-5 mr-14 justify-between">
+		<div className="flex items-center py-6 justify-between">
 			{/* Todo: Implement global search for anything (project or tasks) */}
 			<form
-				className="flex items-center gap-2 px-3 py-2"
+				className="flex items-center gap-2 py-2"
 				onSubmit={handleSearchSubmit}
 			>
 				<Search className="text-[#707070]" />

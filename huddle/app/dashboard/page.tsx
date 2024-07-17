@@ -1,9 +1,7 @@
+import ProjectBody from "@/components/ProjectBody";
+
 const Page = () => {
-	return (
-		<div>
-			<h1>Dashboard</h1>
-		</div>
-	);
+	return <ProjectBody />;
 };
 
 export default Page;

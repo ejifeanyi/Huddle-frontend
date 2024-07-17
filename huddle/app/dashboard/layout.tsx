@@ -9,7 +9,7 @@ export default function DashboardLayout({
 	return (
 		<section className="flex">
 			<Sidebar />
-			<div className="ml-[32px] flex flex-col gap-5 w-full">
+			<div className="ml-[32px] mr-[56px] flex flex-col gap-5 w-full">
 				<Navbar />
 				{children}
 			</div>
